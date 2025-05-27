@@ -1,6 +1,6 @@
 import pygame
 import asyncio
-from bleak import BleakClient
+from bleak import BleakClient, BleakScanner
 from config import address, NUS_TX_UUID
 
 BLE_ADDRESS = address
@@ -21,9 +21,19 @@ def get_controls():
     return lx, ly, rx, th
 
 async def main():
-    print(f"Connecting to drone at {BLE_ADDRESS}...")
+    print("🔍 Scanning for nearby BLE devices...")
+    devices = await BleakScanner.discover(timeout=5.0)
+
+    if not devices:
+        print("No BLE devices found. Make sure your device is powered on and advertising.")
+    else:
+        print("Found BLE devices:")
+        for idx, d in enumerate(devices):
+            print(f"{idx + 1}. {d.name} - {d.address}")
+
+    print(f"\nConnecting to drone at {BLE_ADDRESS}...")
     async with BleakClient(BLE_ADDRESS) as client:
-        print("Connected. Sending control data...")
+        print("✅ Connected. Sending control data...")
         while True:
             lx, ly, rx, th = get_controls()
             payload = f"{lx:.2f},{ly:.2f},{rx:.2f},{th:.2f}"
@@ -32,3 +42,4 @@ async def main():
 
 if __name__ == "__main__":
     asyncio.run(main())
+
