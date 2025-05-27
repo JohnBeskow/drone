@@ -1,10 +1,10 @@
 import pygame
 import asyncio
 from bleak import BleakClient
+from config import address, NUS_TX_UUID
 
-# Replace with your drone's MAC address and characteristic UUID
-BLE_ADDRESS = "D0:39:72:BF:4B:7C"
-CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"  # Example
+BLE_ADDRESS = address
+CHARACTERISTIC_UUID = NUS_TX_UUID
 
 # Joystick setup
 pygame.init()
