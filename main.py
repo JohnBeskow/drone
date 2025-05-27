@@ -1,40 +1,34 @@
-# ~/drone/main.py
-
 import pygame
-import time
+import asyncio
+from bleak import BleakClient
 
-# Initialize pygame and joystick
+# Replace with your drone's MAC address and characteristic UUID
+BLE_ADDRESS = "D0:39:72:BF:4B:7C"
+CHARACTERISTIC_UUID = "0000ffe1-0000-1000-8000-00805f9b34fb"  # Example
+
+# Joystick setup
 pygame.init()
 pygame.joystick.init()
-
-if pygame.joystick.get_count() == 0:
-    print("No controller found. Make sure it's connected via Bluetooth or USB.")
-    exit(1)
-
 joystick = pygame.joystick.Joystick(0)
 joystick.init()
 
-print(f"Connected to controller: {joystick.get_name()}")
+def get_controls():
+    pygame.event.pump()
+    lx = round(joystick.get_axis(0), 2)
+    ly = round(joystick.get_axis(1), 2)
+    rx = round(joystick.get_axis(3), 2)
+    th = round(joystick.get_axis(2), 2)
+    return lx, ly, rx, th
 
-try:
-    while True:
-        pygame.event.pump()
+async def main():
+    print(f"Connecting to drone at {BLE_ADDRESS}...")
+    async with BleakClient(BLE_ADDRESS) as client:
+        print("Connected. Sending control data...")
+        while True:
+            lx, ly, rx, th = get_controls()
+            payload = f"{lx:.2f},{ly:.2f},{rx:.2f},{th:.2f}"
+            await client.write_gatt_char(CHARACTERISTIC_UUID, payload.encode())
+            await asyncio.sleep(0.05)  # 20Hz update rate
 
-        # Read joystick axes
-        lx = joystick.get_axis(0)  # Left stick X
-        ly = joystick.get_axis(1)  # Left stick Y
-        rx = joystick.get_axis(2)  # Right stick X
-        ry = joystick.get_axis(3)  # Right stick Y
-
-        # Read triggers or buttons if needed
-        throttle = joystick.get_axis(5)  # Example for trigger
-
-        print(f"LX: {lx:.2f}, LY: {ly:.2f}, RX: {rx:.2f}, RY: {ry:.2f}, TH: {throttle:.2f}")
-
-        time.sleep(0.05)
-
-except KeyboardInterrupt:
-    print("\nExiting...")
-finally:
-    pygame.quit()
-
+if __name__ == "__main__":
+    asyncio.run(main())
