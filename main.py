@@ -17,7 +17,7 @@ def get_controls():
     lx = round(joystick.get_axis(0), 2)
     ly = round(joystick.get_axis(1), 2)
     rx = round(joystick.get_axis(3), 2)
-    th = round(joystick.get_axis(2), 2)
+    th = round(joystick.get_axis(4), 2)
     return lx, ly, rx, th
 
 async def main():
