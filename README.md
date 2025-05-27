@@ -40,7 +40,10 @@ source venv/bin/activate
 pip install -r requirements.txt
 ```
 ---
-### 5. Run the controller
+### 5. Layout -> Gamepad
+Don't forget to set the joysticks and the whole layout of the Steam Deck as a Gamepad and not as Desktop mode, else, the joysticks will never work
+---
+### 6. Run the controller
 ```
 python main.py
 
@@ -50,7 +53,7 @@ chmod +x setup.sh
 ./setup.sh
 ```
 --- 
-### 6. Run on Steam Deck Startup
+###  Run on Steam Deck Startup(Optional)
 
 terminal:
 ```
