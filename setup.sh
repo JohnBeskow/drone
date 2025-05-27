@@ -1,7 +1,7 @@
-#/bin/bash
+#!/bin/bash
 
 echo "[+] Updating repo..."
-cd ~/drone-controller || exit
+cd ~/drone || exit
 git pull origin main
 
 echo "[+] Running app..."
